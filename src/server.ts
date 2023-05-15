@@ -1,18 +1,23 @@
-// ------------------------------ Imports ------------------------------
-
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-// import usersRouter from "./api/endpoints/users.js";
-// import gamesRouter from "./api/endpoints/games.js";
+import { Server } from "socket.io";
+import { createServer } from "http";
+import { socketHandler } from "./socket/socket";
+
 import { errorHandler } from "./auth/errorHandlers";
 
-// ------------------------------ Server ------------------------------
+const expressServer = express();
 
-dotenv.config();
-const server = express();
-
-// ------------------------------ MiddleWares ------------------------------
+const httpServer = createServer(expressServer);
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "PUT", "POST"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
+  }
+});
+io.on("connection", socketHandler);
 
 const corsOptions = {
   origin: "http://localhost:3000",
@@ -22,16 +27,9 @@ const corsOptions = {
   allowedHeaders: "Content-Type,Authorization"
 };
 
-server.use(cors(corsOptions));
-server.use(express.json({ limit: "5mb" }));
+expressServer.use(cors(corsOptions));
+expressServer.use(express.json({ limit: "5mb" }));
 
-// ------------------------------ Routes ------------------------------
+expressServer.use(errorHandler);
 
-// server.use("/users", usersRouter);
-// server.use("/games", gamesRouter);
-
-// // ------------------------------ Error Handlers ------------------------------
-
-server.use(errorHandler);
-
-export default server;
+export { httpServer, expressServer };

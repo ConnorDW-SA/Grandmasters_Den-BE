@@ -3,10 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon -r dotenv/config ./src/index.ts",
+    "dev": "nodemon --watch 'src/**/*.ts' -r dotenv/config ./src/server.ts",
     "build": "tsc"
   },
   "keywords": [],
@@ -31,7 +30,6 @@
     "@types/http-errors": "^2.0.1",
     "@types/jsonwebtoken": "^9.0.2",
     "dotenv": "^16.0.3",
-    "esm": "^3.2.25",
     "nodemon": "^2.0.22",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.4"

@@ -3,7 +3,7 @@ import { verifyAccessToken } from "./tools.js";
 import { RequestHandler, Request } from "express";
 import { TokenPayload } from "./tools";
 
-interface UserRequest extends Request {
+export interface UserRequest extends Request {
   user?: TokenPayload;
 }
 

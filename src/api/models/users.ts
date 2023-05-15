@@ -68,7 +68,9 @@ UserSchema.statics.checkCredentials = async function (
   }
 };
 
-export default mongoose.model<User, Model<User, UserSchemaStatics>>(
+const UserModel = mongoose.model<User, Model<User, UserSchemaStatics>>(
   "User",
   UserSchema
 );
+
+export { User, UserModel };

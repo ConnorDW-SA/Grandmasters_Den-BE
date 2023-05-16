@@ -8,6 +8,7 @@ import listEndpoints from "express-list-endpoints";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { errorHandler } from "./auth/errorHandlers";
+import usersRouter from "./api/endpoints/users";
 
 // ------------------------------ Server and Config ------------------------------
 dotenv.config();
@@ -37,7 +38,7 @@ const corsOptions = {
 expressServer.use(cors(corsOptions));
 expressServer.use(express.json({ limit: "5mb" }));
 expressServer.use(errorHandler);
-
+expressServer.use("/users", usersRouter);
 // ------------------------------ Database Connection and Server Start ------------------------------
 mongoose
   .connect(process.env.MONGO_CONNECTION!)

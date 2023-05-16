@@ -1,5 +1,5 @@
 import createHttpError from "http-errors";
-import { verifyAccessToken } from "./tools.js";
+import { verifyAccessToken } from "./tools";
 import { RequestHandler, Request } from "express";
 import { TokenPayload } from "./tools";
 
@@ -25,8 +25,7 @@ export const jwtAuthMiddleware: RequestHandler = async (
 
       const payload = await verifyAccessToken(accessToken);
       req.user = {
-        _id: payload._id,
-        role: payload.role
+        _id: payload._id
       };
       next();
     } catch (error) {

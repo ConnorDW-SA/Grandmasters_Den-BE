@@ -1,20 +1,10 @@
-import mongoose, { Document, Model, Schema } from "mongoose";
+import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import { UserDocument, UserModel } from "./usertypes";
 
-interface User extends Document {
-  username: string;
-  password: string;
-  email: string;
-  createdAt: Date;
-  updatedAt: Date;
-  toJSON(): User;
-}
+const { Schema, model } = mongoose;
 
-interface UserSchemaStatics {
-  checkCredentials(email: string, plainPW: string): Promise<User | null>;
-}
-
-const UserSchema = new Schema<User, Model<User, UserSchemaStatics>>(
+const UserSchema = new Schema(
   {
     username: {
       type: String,
@@ -36,7 +26,7 @@ const UserSchema = new Schema<User, Model<User, UserSchemaStatics>>(
   { timestamps: true }
 );
 
-UserSchema.pre<User>("save", async function (next) {
+UserSchema.pre("save", async function (next) {
   const newUser = this;
   const plainPW = newUser.password;
   if (newUser.isModified("password")) {
@@ -45,7 +35,7 @@ UserSchema.pre<User>("save", async function (next) {
   next();
 });
 
-UserSchema.methods.toJSON = function (): User {
+UserSchema.methods.toJSON = function () {
   const user = this.toObject();
   delete user.password;
   delete user.__v;
@@ -54,23 +44,23 @@ UserSchema.methods.toJSON = function (): User {
   return user;
 };
 
-UserSchema.statics.checkCredentials = async function (
-  email: string,
-  plainPW: string
-): Promise<User | null> {
-  const user = await this.findOne({ email });
-  if (user) {
-    const isMatch = await bcrypt.compare(plainPW, user.password);
-    if (isMatch) return user;
-    else return null;
-  } else {
-    return null;
-  }
-};
+UserSchema.static(
+  "checkCredentials",
+  async function (email: string, password: string) {
+    const user: UserDocument = await this.findOne({ email });
 
-const UserModel = mongoose.model<User, Model<User, UserSchemaStatics>>(
-  "User",
-  UserSchema
+    if (user) {
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (passwordMatch) {
+        return user;
+      } else {
+        return null;
+      }
+    } else {
+      return null;
+    }
+  }
 );
 
-export { User, UserModel };
+export default model<UserDocument, UserModel>("User", UserSchema);

@@ -1,6 +1,6 @@
 import express, { Request } from "express";
 import createError from "http-errors";
-import { UserModel } from "../models/users";
+import UserModel from "../models/users";
 import { createAccessToken } from "../../auth/tools";
 import { jwtAuthMiddleware, UserRequest } from "../../auth/auth";
 

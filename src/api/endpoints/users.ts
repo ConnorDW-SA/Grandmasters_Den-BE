@@ -1,4 +1,4 @@
-import express, { Request } from "express";
+import express from "express";
 import createError from "http-errors";
 import UserModel from "../models/users";
 import { createAccessToken } from "../../auth/tools";
@@ -21,8 +21,6 @@ usersRouter.get(
     }
   }
 );
-
-// Get user by ID
 
 // Login
 

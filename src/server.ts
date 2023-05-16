@@ -39,7 +39,9 @@ expressServer.use(cors(corsOptions));
 expressServer.use(express.json({ limit: "5mb" }));
 expressServer.use(errorHandler);
 expressServer.use("/users", usersRouter);
+
 // ------------------------------ Database Connection and Server Start ------------------------------
+
 mongoose
   .connect(process.env.MONGO_CONNECTION!)
   .then(() => {

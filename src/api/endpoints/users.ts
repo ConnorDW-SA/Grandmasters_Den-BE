@@ -4,6 +4,7 @@ import createError from "http-errors";
 import UserModel from "../models/users";
 import { createAccessToken } from "../../auth/tools";
 import { jwtAuthMiddleware, UserRequest } from "../../auth/auth";
+import CustomError from "../../auth/errorHandlers";
 
 // -------------------------- ROUTER -------------------------------------
 const usersRouter = express.Router();
@@ -31,8 +32,10 @@ export default usersRouter
         const payload = { _id: user._id };
         const accessToken = await createAccessToken(payload);
         res.send({ user, accessToken });
+        console.log(user.email, "logged in");
       } else {
-        next(createError(401, "Invalid email or password"));
+        const error = new CustomError("Invalid email or password", 401);
+        next(error);
       }
     } catch (error) {
       next(error);

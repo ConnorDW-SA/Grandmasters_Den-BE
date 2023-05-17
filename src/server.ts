@@ -37,8 +37,9 @@ const corsOptions = {
 };
 expressServer.use(cors(corsOptions));
 expressServer.use(express.json({ limit: "5mb" }));
-expressServer.use(errorHandler);
+
 expressServer.use("/users", usersRouter);
+expressServer.use(errorHandler);
 
 // ------------------------------ Database Connection and Server Start ------------------------------
 

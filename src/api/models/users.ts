@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
-import { UserDocument, UserModel } from "./usertypes";
+import { UserDocument, UserModel } from "./userTypes";
 
 const { Schema, model } = mongoose;
 

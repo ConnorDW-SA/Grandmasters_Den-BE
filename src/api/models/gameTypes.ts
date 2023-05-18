@@ -1,5 +1,5 @@
 import { Document, Model } from "mongoose";
-import { UserDocument } from "./usertypes";
+import { UserDocument } from "./userTypes";
 
 export interface Piece {
   type: string;

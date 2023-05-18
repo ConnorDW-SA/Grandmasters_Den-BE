@@ -22,14 +22,3 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
       res.status(500).send({ message: "Server Error" });
   }
 };
-
-class CustomError extends Error {
-  status: number;
-
-  constructor(message: string, status: number) {
-    super(message);
-    this.status = status;
-  }
-}
-
-export default CustomError;

@@ -9,12 +9,13 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { errorHandler } from "./auth/errorHandlers";
 import usersRouter from "./api/endpoints/users";
+import gamesRouter from "./api/endpoints/games";
 
 // ------------------------------ Server and Config ------------------------------
 dotenv.config();
 const expressServer = express();
 const httpServer = createServer(expressServer);
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3003;
 
 // ------------------------------ Socket.io ------------------------------
 const io = new Server(httpServer, {
@@ -39,6 +40,7 @@ expressServer.use(cors(corsOptions));
 expressServer.use(express.json({ limit: "5mb" }));
 
 expressServer.use("/users", usersRouter);
+expressServer.use("/games", gamesRouter);
 expressServer.use(errorHandler);
 
 // ------------------------------ Database Connection and Server Start ------------------------------

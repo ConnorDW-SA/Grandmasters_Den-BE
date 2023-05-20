@@ -57,3 +57,12 @@ mongoose
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error.message);
   });
+
+process.on("SIGINT", function () {
+  console.log("\nGracefully shutting down from SIGINT (Ctrl+C)");
+
+  // Close your server here
+  httpServer.close(() => {
+    console.log("Http server closed.");
+  });
+});

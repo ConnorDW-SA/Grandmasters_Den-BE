@@ -73,7 +73,6 @@ export default gamesRouter
 
       if (game) {
         res.send(game);
-        console.log(game);
       } else {
         next(createError(404, "Game not found"));
       }

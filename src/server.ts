@@ -15,7 +15,7 @@ import gamesRouter from "./api/endpoints/games";
 dotenv.config();
 const expressServer = express();
 const httpServer = createServer(expressServer);
-const port = process.env.PORT || 3003;
+const port = process.env.PORT || 3001;
 
 // ------------------------------ Socket.io ------------------------------
 const io = new Server(httpServer, {

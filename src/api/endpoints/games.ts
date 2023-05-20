@@ -28,15 +28,17 @@ export default gamesRouter
     jwtAuthMiddleware,
     async (req: UserRequest, res, next) => {
       try {
-        const { player2 } = req.body;
-        const player2User = await UserModel.findById(player2);
+        const player2Id = req.body.player2;
+        console.log("player2id:", player2Id);
+        const player2User = await UserModel.findById(player2Id);
         if (!player2User) {
+          console.log("player not found");
           return res.status(404).send({ error: "Player 2 not found" });
         }
         const existingGame = await GameModel.findOne({
           $or: [
-            { player1: req.user?._id, player2 },
-            { player1: player2, player2: req.user?._id }
+            { player1: req.user?._id, player2: player2Id },
+            { player1: player2Id, player2: req.user?._id }
           ]
         });
 
@@ -47,7 +49,10 @@ export default gamesRouter
             .send({ error: "A game between these players already exists" });
         }
 
-        const newGame = new GameModel({ player1: req.user?._id, player2 });
+        const newGame = new GameModel({
+          player1: req.user?._id,
+          player2: player2Id
+        });
         const { _id } = await newGame.save();
         res.status(201).send({ _id });
       } catch (error) {

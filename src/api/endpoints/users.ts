@@ -2,8 +2,10 @@
 import express from "express";
 import createError from "http-errors";
 import UserModel from "../models/users";
+import GameModel from "../models/games";
 import { createAccessToken } from "../../auth/tools";
 import { jwtAuthMiddleware, UserRequest } from "../../auth/auth";
+import mongoose from "mongoose";
 
 // -------------------------- ROUTER -------------------------------------
 const usersRouter = express.Router();
@@ -13,8 +15,24 @@ export default usersRouter
   // -------------------------- GET USERS -------------------------------------
   .get("/allUsers", jwtAuthMiddleware, async (req: UserRequest, res, next) => {
     try {
-      const currentUser = await UserModel.findById(req.user?._id);
-      const users = await UserModel.find({ _id: { $ne: currentUser?._id } });
+      const currentUserID = req.user?._id;
+      const games = await GameModel.find({
+        $or: [
+          { player1: new mongoose.Types.ObjectId(currentUserID) },
+          { player2: new mongoose.Types.ObjectId(currentUserID) }
+        ]
+      });
+      const usersWithExistingGames = games.map((game) =>
+        game.player1.toString() === currentUserID
+          ? game.player2.toString()
+          : game.player1.toString()
+      );
+      const users = await UserModel.find({
+        _id: {
+          $ne: currentUserID,
+          $nin: usersWithExistingGames
+        }
+      });
       res.send(users.map((user) => user.toJSON()));
     } catch (error) {
       next(error);

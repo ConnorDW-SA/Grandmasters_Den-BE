@@ -3,14 +3,10 @@ import { Socket } from "socket.io";
 interface Move {
   from: string;
   to: string;
-  currentTurn: string;
+  currentPlayer: string;
   capturedPiece?: string;
   promotion?: string;
-}
-
-interface ChatMessage {
-  sender: string;
-  content: string;
+  moveHistory: [{}];
 }
 
 export const socketHandler = (newClient: Socket) => {
@@ -29,19 +25,9 @@ export const socketHandler = (newClient: Socket) => {
       console.log(
         `Client ${newClient.id} made move ${JSON.stringify(
           move
-        )} in game ${gameId}. Current turn: ${move.currentTurn}`
+        )} in game ${gameId}. Current turn: ${move.currentPlayer}`
       );
       newClient.to(gameId).emit("opponent move", move);
-    }
-  );
-
-  newClient.on(
-    "send chat message",
-    ({ gameId, message }: { gameId: string; message: ChatMessage }) => {
-      console.log(
-        `Client ${newClient.id} sent a chat message in game ${gameId}`
-      );
-      newClient.to(gameId).emit("receive chat message", message);
     }
   );
 

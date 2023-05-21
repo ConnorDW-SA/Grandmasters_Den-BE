@@ -17,7 +17,6 @@ export default gamesRouter
         $or: [{ player1: req.user?._id }, { player2: req.user?._id }]
       }).populate("player1 player2");
       res.send(games);
-      console.log(games);
     } catch (error) {
       next(error);
     }

@@ -18,7 +18,7 @@ const httpServer = createServer(expressServer);
 const port = process.env.PORT || 3001;
 
 // ------------------------------ Socket.io ------------------------------
-const io = new Server(httpServer, {
+export const io = new Server(httpServer, {
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "PUT", "POST"],
@@ -34,7 +34,7 @@ const corsOptions = {
   optionSuccessStatus: 200,
   credentials: true,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
-  allowedHeaders: "Content-Type,Authorization"
+  allowedHeaders: "Content-Type,Authorization,If-Match"
 };
 expressServer.use(cors(corsOptions));
 expressServer.use(express.json({ limit: "5mb" }));

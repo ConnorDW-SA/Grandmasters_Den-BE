@@ -4,7 +4,7 @@ import createError from "http-errors";
 import GameModel from "../models/games";
 import UserModel from "../models/users";
 import { jwtAuthMiddleware, UserRequest } from "../../auth/auth";
-
+import { io } from "../../server";
 // -------------------------- ROUTER -------------------------------------
 const gamesRouter = express.Router();
 
@@ -55,6 +55,7 @@ export default gamesRouter
         });
         const { _id } = await newGame.save();
         res.status(201).send({ _id });
+        console.log(_id);
       } catch (error) {
         next(error);
       }
@@ -86,39 +87,17 @@ export default gamesRouter
       const game = await GameModel.findOne({
         _id: req.params.gameId,
         $or: [{ player1: req.user?._id }, { player2: req.user?._id }]
-      });
-
+      }).populate("player1 player2");
       if (!game) {
         next(createError(404, "Game not found"));
         return;
       }
+      const updatedGame = req.body;
 
-      const { oldPosition, newPosition, hasMoved } = req.body;
-
-      const pieceIndex = game.boardState.findIndex(
-        (piece) => piece.position === oldPosition
-      );
-
-      if (pieceIndex === -1) {
-        next(createError(400, "Piece not found"));
-        return;
-      }
-
-      game.boardState[pieceIndex].position = newPosition;
-      if ("hasMoved" in game.boardState[pieceIndex]) {
-        game.boardState[pieceIndex].hasMoved = hasMoved;
-      }
-
-      const currentPlayer =
-        game.currentPlayer.toString() === game.player1.toString()
-          ? game.player2
-          : game.player1;
-      game.currentPlayer = currentPlayer;
-
-      const updatedGame = await game.save();
-
-      res.send(updatedGame);
-      console.log("User successfully updated game");
+      Object.assign(game, updatedGame);
+      const savedGame = await game.save();
+      console.log("Game updated");
+      res.send(savedGame);
     } catch (error) {
       next(error);
     }

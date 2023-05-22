@@ -8,7 +8,7 @@ export interface Piece {
   hasMoved?: boolean;
 }
 
-interface Game {
+export interface Game {
   player1: UserDocument;
   player2: UserDocument;
   boardState: Piece[];

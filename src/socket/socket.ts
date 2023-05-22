@@ -1,35 +1,27 @@
 import { Socket } from "socket.io";
-
-interface Move {
-  from: string;
-  to: string;
-  currentPlayer: string;
-  capturedPiece?: string;
-  promotion?: string;
-  moveHistory: [{}];
-}
-
+import GameModel from "../api/models/games";
 export const socketHandler = (newClient: Socket) => {
   console.log("NEW CONNECTION:", newClient.id);
-  newClient.emit("welcome", { message: `Hello ${newClient.id}` });
 
-  newClient.on("join game", (gameId: string) => {
-    console.log(`Client ${newClient.id} joined game ${gameId}`);
+  newClient.on("fetch_game", (gameId: string) => {
+    console.log(`Client ${newClient.id} fetched game ${gameId}`);
     newClient.join(gameId);
-    newClient.to(gameId).emit("player joined", { playerId: newClient.id });
   });
 
-  newClient.on(
-    "make move",
-    ({ gameId, move }: { gameId: string; move: Move }) => {
-      console.log(
-        `Client ${newClient.id} made move ${JSON.stringify(
-          move
-        )} in game ${gameId}. Current turn: ${move.currentPlayer}`
-      );
-      newClient.to(gameId).emit("opponent move", move);
+  newClient.on("move", async (gameId: string, newGameState) => {
+    if (
+      String(newGameState.currentPlayer._id) ===
+      String(newGameState.player1._id)
+    ) {
+      newGameState.currentPlayer = newGameState.player2._id;
+    } else {
+      newGameState.currentPlayer = newGameState.player1._id;
     }
-  );
+
+    await GameModel.updateOne({ _id: gameId }, newGameState);
+
+    newClient.to(gameId).emit("game_updated", newGameState);
+  });
 
   newClient.on("disconnect", () => {
     newClient.broadcast.emit("User disconnected");

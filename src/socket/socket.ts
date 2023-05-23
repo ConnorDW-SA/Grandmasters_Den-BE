@@ -19,7 +19,7 @@ export const socketHandler = (newClient: Socket) => {
     }
 
     await GameModel.updateOne({ _id: gameId }, newGameState);
-
+    console.log(`Client ${newClient.id} updated game ${gameId}`);
     newClient.to(gameId).emit("game_updated", newGameState);
   });
 

@@ -11,7 +11,12 @@ export const socketHandler = (newClient: Socket) => {
   newClient.on("move", async (gameId: string, newGameState) => {
     console.log(`Client ${newClient.id} updated game ${gameId}`);
     await GameModel.updateOne({ _id: gameId }, newGameState);
-    newClient.to(gameId).emit("move_made");
+
+    // Retrieve the updated game from the database
+    const updatedGame = await GameModel.findById(gameId);
+
+    // Emit the move_made event with the current player ID
+    newClient.to(gameId).emit("move_made", updatedGame?.currentPlayer);
   });
 
   newClient.on("disconnect", () => {

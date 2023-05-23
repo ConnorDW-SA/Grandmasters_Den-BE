@@ -9,18 +9,9 @@ export const socketHandler = (newClient: Socket) => {
   });
 
   newClient.on("move", async (gameId: string, newGameState) => {
-    if (
-      String(newGameState.currentPlayer._id) ===
-      String(newGameState.player1._id)
-    ) {
-      newGameState.currentPlayer = newGameState.player2._id;
-    } else {
-      newGameState.currentPlayer = newGameState.player1._id;
-    }
-
-    await GameModel.updateOne({ _id: gameId }, newGameState);
     console.log(`Client ${newClient.id} updated game ${gameId}`);
-    newClient.to(gameId).emit("game_updated", newGameState);
+    await GameModel.updateOne({ _id: gameId }, newGameState);
+    newClient.to(gameId).emit("move_made");
   });
 
   newClient.on("disconnect", () => {

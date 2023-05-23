@@ -42,7 +42,7 @@ const { Schema, model } = mongoose;
 const PieceSchema = new Schema<Piece>({
   type: { type: String, required: true },
   color: { type: String, required: true },
-  position: { type: String, required: true },
+  position: { type: String },
   hasMoved: { type: Boolean, default: false }
 });
 
@@ -70,16 +70,7 @@ const GameSchema = new Schema<GameDocument, GameModel>(
       default: function () {
         return this.player1;
       }
-    },
-    moveHistory: [
-      {
-        from: { type: String, required: true },
-        to: { type: String, required: true },
-        piece: { type: String, required: true },
-        color: { type: String, enum: ["white", "black"], required: true },
-        promotion: { type: String }
-      }
-    ]
+    }
   },
   { timestamps: true }
 );

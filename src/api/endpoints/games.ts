@@ -88,12 +88,19 @@ export default gamesRouter
         _id: req.params.gameId,
         $or: [{ player1: req.user?._id }, { player2: req.user?._id }]
       }).populate("player1 player2");
+
       if (!game) {
         next(createError(404, "Game not found"));
         return;
       }
       const updatedGame = req.body;
 
+      if (game.player1._id.toString() === req.user?._id.toString()) {
+        updatedGame.currentPlayer = game.player2._id;
+      } else if (game.player2._id.toString() === req.user?._id.toString()) {
+        updatedGame.currentPlayer = game.player1._id;
+      }
+      console.log(updatedGame.currentPlayer);
       Object.assign(game, updatedGame);
       const savedGame = await game.save();
       console.log("Game updated");
